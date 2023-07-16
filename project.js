@@ -95,7 +95,7 @@ const spin = () => {
     return rows;
   };
 
-  const printRows = (rows) => {
+const printRows = (rows) => {
     for (const row of rows) {
       let rowString = "";
       for (const [i, symbol] of row.entries()) {
@@ -108,12 +108,62 @@ const spin = () => {
     }
   };
 
+  const getWinnings = (rows, bet, lines) => {
+    let winnings = 0;
+  
+    for (let row = 0; row < lines; row++) {
+      const symbols = rows[row];
+      let allSame = true;
+  
+      for (const symbol of symbols) {
+        if (symbol != symbols[0]) {
+          allSame = false;
+          break;
+        }
+      }
+  
+      if (allSame) {
+        winnings += bet * SYMBOL_VALUES[symbols[0]];
+      }
+    }
+  
+    return winnings;
+};
+
+const game = () => {
+
 let balance = deposit();
-const numberOfLines = getNumberOfLines();
-const bet = getBet(balance , numberOfLines);
-const reels = spin();
-const rows = transpose(reels);
-printRows(rows);
+
+while(true){
+
+    console.log("Your left balance is of $" +balance);
+
+    const numberOfLines = getNumberOfLines();
+    const bet = getBet(balance , numberOfLines);
+    balance -=bet *numberOfLines;
+
+    const reels = spin();
+    const rows = transpose(reels);
+    printRows(rows);
+    const winnings = getWinnings(rows, bet, numberOfLines);
+    balance+= winnings;
+    console.log("You won,$" + winnings.toString()); 
+
+    if(balance <= 0){
+        console.log(" Sorry Your Pocket is empty :( ");
+        break;
+    }
+    const playAgain = prompt("Do you wanna continue playing :) (y/n) ");
+
+    if(playAgain != "y")break;
+}
+
+};
+
+game();
+
+
+
 
 
 
